@@ -22,7 +22,7 @@ type Ernyi struct {
 func CreateErnyi(config *Config)*Ernyi {
 	ern := new(Ernyi)
 	ern.memberlock = &sync.RWMutex{}
-	mlist, err  = Create(config.MemberlistConfig)
+	mlist, err := memberlist.Create(config.MemberlistConfig)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -57,7 +57,7 @@ func (ern *Ernyi) JoinMany(addrs []string) error {
 	}
 	ern.memberlock.Lock()
 	defer ern.memberlock.Unlock()
-	nummembers, err := ern.mlist.Join(addr)
+	nummembers, err := ern.mlist.Join(addrs)
 	if err != nil {
 		return err
 	}
