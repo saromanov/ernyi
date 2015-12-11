@@ -34,7 +34,8 @@ func (ern *Ernyi) Join(addr string) error{
 	if addr == "" {
 		return errEmptyName
 	}
-
+	ern.memberlock.Lock()
+	defer ern.memberlock.Unlock()
 	nummembers, err := ern.mlist.Join([]string{addr})
 	if err != nil {
 		return err
@@ -52,6 +53,8 @@ func (ern *Ernyi) JoinMany(addrs []string) error {
 	if len(addrs) == 0 {
 		return errEmptyListMembers
 	}
+	ern.memberlock.Lock()
+	defer ern.memberlock.Unlock()
 	nummembers, err := ern.mlist.Join(addr)
 	if err != nil {
 		return err
@@ -71,6 +74,8 @@ func (ern *Ernyi) Stop() error {
 	 if err != nil {
 	 	return err
 	 }
+
+	 return nil
 }
 
 // Members return current alive members
