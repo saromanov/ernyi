@@ -16,6 +16,7 @@ var (
 type Ernyi struct {
 	mlist  *memberlist.Memberlist
 	memberlock  *sync.RWMutex
+	tags   map[string][]string
 }
 
 func CreateErnyi(config *Config)*Ernyi {
@@ -25,6 +26,7 @@ func CreateErnyi(config *Config)*Ernyi {
 	if err != nil {
 		log.Fatal(err)
 	}
+	ern.tags = map[string][]string{}
 	ern.mlist = mlist
 	return ern
 }
@@ -65,6 +67,11 @@ func (ern *Ernyi) JoinMany(addrs []string) error {
 			nummembers)
 	}
 	return nil
+}
+
+// Tags add tags for node
+func (ern *Ernyi) Tags(nodename string, tags[]string) {
+	ern.tags[nodename] = tags
 }
 
 // Stop provides stopping of Ernyi
