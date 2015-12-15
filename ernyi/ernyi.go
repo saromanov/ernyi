@@ -74,6 +74,28 @@ func (ern *Ernyi) Tags(nodename string, tags[]string) {
 	ern.tags[nodename] = tags
 }
 
+func (ern *Ernyi) Send(addr string, msg []byte) error {
+	node := ern.mlist.LocalNode()
+
+	if node == nil {
+		return fmt.Errorf("Can't get local node")
+	}
+	ern.mlist.SendToTCP(node, msg)
+
+	return nil
+}
+
+// Info returns information about Ernyi
+func (ern *Ernyi) Info() map[string] string {
+	return map[string] string {
+		"protocol_version": fmt.Sprintf("%s", ern.mlist.ProtocolVersion()),
+	}
+}
+
+func (ern *Ernyi) Start() {
+	StartServer()
+}
+
 // Stop provides stopping of Ernyi
 func (ern *Ernyi) Stop() error {
 	var err error
@@ -87,5 +109,5 @@ func (ern *Ernyi) Stop() error {
 
 // Members return current alive members
 func (ern *Ernyi) Members()[]*memberlist.Node {
-	return ern.Members()
+	return ern.mlist.Members()
 }
