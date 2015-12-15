@@ -17,6 +17,7 @@ type Ernyi struct {
 	mlist  *memberlist.Memberlist
 	memberlock  *sync.RWMutex
 	tags   map[string][]string
+	event  chan bool
 }
 
 func CreateErnyi(config *Config)*Ernyi {
@@ -28,6 +29,7 @@ func CreateErnyi(config *Config)*Ernyi {
 	}
 	ern.tags = map[string][]string{}
 	ern.mlist = mlist
+	ern.event = make(chan bool,1)
 	return ern
 }
 
@@ -80,6 +82,7 @@ func (ern *Ernyi) Send(addr string, msg []byte) error {
 	if node == nil {
 		return fmt.Errorf("Can't get local node")
 	}
+	fmt.Println("NUm MEMBERS: ", ern.mlist.NumMembers())
 	ern.mlist.SendToTCP(node, msg)
 
 	return nil
@@ -92,8 +95,17 @@ func (ern *Ernyi) Info() map[string] string {
 	}
 }
 
+
+// Start provides basic start if Ernyi
 func (ern *Ernyi) Start() {
-	StartServer()
+	go func(){
+		for {
+			select {
+				case item := <- ern.event:
+					fmt.Println(item)
+			}
+		}
+	}()
 }
 
 // Stop provides stopping of Ernyi
