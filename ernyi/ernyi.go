@@ -6,6 +6,10 @@ import (
     "errors"
     "log"
     "fmt"
+    "net"
+    "os"
+    "os/signal"
+    "syscall"
     "./event"
 )
 
@@ -25,6 +29,11 @@ type Ernyi struct {
 func CreateErnyi(config *Config)*Ernyi {
 	ern := new(Ernyi)
 	ern.memberlock = &sync.RWMutex{}
+	Addr := &net.TCPAddr{
+		 IP:   net.ParseIP(config.MemberlistConfig.BindAddr),
+		 Port: config.MemberlistConfig.BindPort,
+	}
+	ern.addr = Addr.String()
 	mlist, err := memberlist.Create(config.MemberlistConfig)
 	if err != nil {
 		log.Fatal(err)
@@ -32,7 +41,7 @@ func CreateErnyi(config *Config)*Ernyi {
 	ern.tags = map[string][]string{}
 	ern.mlist = mlist
 	ern.event = make(chan event.Event,64)
-	ern.addr = config.Addr
+	ern.Join(ern.addr)
 	return ern
 }
 
@@ -45,6 +54,7 @@ func (ern *Ernyi) Join(addr string) error{
 	defer ern.memberlock.Unlock()
 	nummembers, err := ern.mlist.Join([]string{addr})
 	if err != nil {
+		fmt.Println("ERRR: ", nummembers, err)
 		return err
 	}
 
@@ -113,7 +123,17 @@ func (ern *Ernyi) Start() {
 		}
 	}()
 
-	StartServer(ern.addr)
+	ern.receiveExit()
+	//StartServer(ern.addr)
+}
+
+func (ern *Ernyi) receiveExit(){
+	c := make(chan os.Signal, 1)
+    signal.Notify(c, os.Interrupt)
+    signal.Notify(c, syscall.SIGTERM)
+    <-c
+    ern.Stop()
+    os.Exit(1)
 }
 
 // Stop provides stopping of Ernyi
