@@ -6,6 +6,7 @@ import (
     "errors"
     "log"
     "fmt"
+    "./event"
 )
 
 var (
@@ -17,7 +18,8 @@ type Ernyi struct {
 	mlist  *memberlist.Memberlist
 	memberlock  *sync.RWMutex
 	tags   map[string][]string
-	event  chan bool
+	event  chan event.Event
+	addr string
 }
 
 func CreateErnyi(config *Config)*Ernyi {
@@ -29,7 +31,8 @@ func CreateErnyi(config *Config)*Ernyi {
 	}
 	ern.tags = map[string][]string{}
 	ern.mlist = mlist
-	ern.event = make(chan bool,1)
+	ern.event = make(chan event.Event,64)
+	ern.addr = config.Addr
 	return ern
 }
 
@@ -102,10 +105,15 @@ func (ern *Ernyi) Start() {
 		for {
 			select {
 				case item := <- ern.event:
-					fmt.Println(item)
+					eventname := item.String()
+					if eventname == "stop" {
+						return
+					}
 			}
 		}
 	}()
+
+	StartServer(ern.addr)
 }
 
 // Stop provides stopping of Ernyi
