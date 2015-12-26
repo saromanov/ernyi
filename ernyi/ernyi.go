@@ -124,7 +124,6 @@ func (ern *Ernyi) Start() {
 	}()
 
 	ern.receiveExit()
-	//StartServer(ern.addr)
 }
 
 func (ern *Ernyi) receiveExit(){
