@@ -55,7 +55,33 @@ func CreateErnyi(){
 }
 
 func Join() {
-	fmt.Println(*addr)
+	mconfig := memberlist.DefaultLANConfig()
+	if *name == "" {
+		log.Fatal("Name must be non-empty")
+	}
+
+	if *addr == "" {
+		log.Fatal("Address must be non-empty")
+	}
+	shost, sport, err := net.SplitHostPort(*addr)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	mconfig.Name = *name
+	mconfig.BindAddr = shost
+	res, erratoi := strconv.Atoi(sport)
+	if erratoi != nil {
+		log.Fatal(erratoi)
+	}
+	mconfig.BindPort = res
+
+	cfg := &ernyi.Config {
+		MemberlistConfig: mconfig,
+	}
+
+	value := ernyi.CreateErnyi(cfg)
+	value.Join(*addr)
 }
 
 func Members() {
