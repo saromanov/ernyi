@@ -19,6 +19,7 @@ var (
 	create = "create"
 	join = "join"
 	info = "info"
+	members = "members"
 )
 
 func CreateErnyi(){
@@ -57,12 +58,27 @@ func Join() {
 	fmt.Println(*addr)
 }
 
+func Members() {
+	mconfig := memberlist.DefaultLANConfig()
+	mconfig.BindPort = 7947
+	cfg := &ernyi.Config {
+		MemberlistConfig: mconfig,
+	}
+	value := ernyi.CreateErnyi(cfg)
+	members := value.Members()
+	for _, member := range members {
+		 fmt.Println(member)
+	}
+}
+
 func ProcessCommands() {
 	switch *command {
 		case create:
 			CreateErnyi()
 		case join:
 			Join()
+		case members:
+			Members()
 		default:
 			fmt.Println("Unknown command")
 	}
