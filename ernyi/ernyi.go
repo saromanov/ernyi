@@ -8,6 +8,7 @@ import (
     "fmt"
     "net"
     "os"
+    "time"
     "os/signal"
     "syscall"
     "./event"
@@ -95,10 +96,15 @@ func (ern *Ernyi) Send(addr string, msg []byte) error {
 	if node == nil {
 		return fmt.Errorf("Can't get local node")
 	}
-	fmt.Println("NUm MEMBERS: ", ern.mlist.NumMembers())
+	fmt.Println("Num MEMBERS: ", ern.mlist.NumMembers())
 	ern.mlist.SendToTCP(node, msg)
 
 	return nil
+}
+
+// Ping provides ping to the node with the specified name
+func (ern *Ernyi) Ping(addrname string, addr net.Addr)(time.Duration, error) {
+	return ern.mlist.Ping(addrname, addr)
 }
 
 // Info returns information about Ernyi
