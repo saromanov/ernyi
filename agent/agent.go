@@ -2,6 +2,7 @@ package agent
 
 import (
 	"log"
+	"fmt"
 	"net"
 	"strconv"
 	"net/http"
@@ -59,6 +60,13 @@ func (agent *Agent) Join(addr string, reply *bool) error {
 	}
 
 	return err
+}
+
+func (agent *Agent) Members(members *[]*memberlist.Node, reply *bool) error {
+	result := agent.Ern.Members()
+	*members = result
+	*reply = true
+	return nil
 }
 
 func setupRPC(addr string) {

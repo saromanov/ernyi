@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/hashicorp/memberlist"
 	"github.com/saromanov/ernyi/agent"
-	"github.com/saromanov/ernyi/ernyi"
 	"gopkg.in/alecthomas/kingpin.v2"
 	"log"
 	"net/rpc"
@@ -48,20 +47,30 @@ func Join() {
 	if err != nil {
 		log.Fatal("arith error:", err)
 	}
-	fmt.Printf("FINE: ", reply)
+
+	if !reply {
+		log.Fatal("Replay from command Join is false")
+	}
 }
 
 func Members() {
-	mconfig := memberlist.DefaultLANConfig()
-	mconfig.BindPort = 7947
-	cfg := &ernyi.Config{
-		MemberlistConfig: mconfig,
+	client, err := rpc.DialHTTP("tcp", *rpcaddr)
+	if err != nil {
+		log.Fatal("dialing:", err)
 	}
-	value := ernyi.CreateErnyi(cfg)
-	members := value.Members()
-	for _, member := range members {
-		fmt.Println(member)
+
+	var reply bool
+	var members []*memberlist.Node
+	err = client.Call("Agent.Members", &members, &reply)
+	if err != nil {
+		log.Fatal(fmt.Sprintf("%v", err))
 	}
+
+	if !reply {
+		log.Fatal("Replay from command Join is false")
+	}
+
+	fmt.Println(members)
 }
 
 func ProcessCommands() {
