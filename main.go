@@ -1,117 +1,74 @@
 package main
-import(
-  "gopkg.in/alecthomas/kingpin.v2"
-  "fmt"
-  "log"
-  "net"
-  "./ernyi"
-  "github.com/hashicorp/memberlist"
-  "strconv"
+
+import (
+	"fmt"
+	"github.com/hashicorp/memberlist"
+	"github.com/saromanov/ernyi/agent"
+	"github.com/saromanov/ernyi/ernyi"
+	"gopkg.in/alecthomas/kingpin.v2"
+	"log"
+	"net/rpc"
 )
 
 var (
 	command = kingpin.Arg("command", "Command").Required().String()
-	name = kingpin.Flag("name", "Name of the node").String()
-	addr = kingpin.Flag("addr", "Address of Ernyi node in format host:port").String()
+	name    = kingpin.Flag("name", "Name of the node").String()
+	addr    = kingpin.Flag("addr", "Address of Ernyi node in format host:port").String()
 )
 
 var (
-	create = "create"
-	join = "join"
-	info = "info"
+	create  = "create"
+	join    = "join"
+	info    = "info"
 	members = "members"
 )
 
-func CreateErnyi(){
-	mconfig := memberlist.DefaultLANConfig()
-	if *name == "" {
-		log.Fatal("Name must be non-empty")
-	}
-
-	if *addr == "" {
-		log.Fatal("Address must be non-empty")
-	}
-	shost, sport, err := net.SplitHostPort(*addr)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	mconfig.Name = *name
-	mconfig.BindAddr = shost
-	res, erratoi := strconv.Atoi(sport)
-	if erratoi != nil {
-		log.Fatal(erratoi)
-	}
-	mconfig.BindPort = res
-
-	cfg := &ernyi.Config {
-		MemberlistConfig: mconfig,
-	}
-
-	value := ernyi.CreateErnyi(cfg)
-	log.Printf("Ernyi is started")
-	value.Start()
-
+func CreateErnyi() {
+	agent.CreateAgent(*name, *addr)
 }
 
 func Join() {
-	mconfig := memberlist.DefaultLANConfig()
-	if *name == "" {
-		log.Fatal("Name must be non-empty")
-	}
-
-	if *addr == "" {
-		log.Fatal("Address must be non-empty")
-	}
-	shost, sport, err := net.SplitHostPort(*addr)
+	client, err := rpc.DialHTTP("tcp", "127.0.0.1:9652")
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("dialing:", err)
 	}
 
-	mconfig.Name = *name
-	mconfig.BindAddr = shost
-	res, erratoi := strconv.Atoi(sport)
-	if erratoi != nil {
-		log.Fatal(erratoi)
+	var reply bool
+	err = client.Call("Agent.Join", *addr, &reply)
+	if err != nil {
+		log.Fatal("arith error:", err)
 	}
-	mconfig.BindPort = res
-
-	cfg := &ernyi.Config {
-		MemberlistConfig: mconfig,
-	}
-
-	value := ernyi.CreateErnyi(cfg)
-	value.Join(*addr)
+	fmt.Printf("FINE: ", reply)
 }
 
 func Members() {
 	mconfig := memberlist.DefaultLANConfig()
 	mconfig.BindPort = 7947
-	cfg := &ernyi.Config {
+	cfg := &ernyi.Config{
 		MemberlistConfig: mconfig,
 	}
 	value := ernyi.CreateErnyi(cfg)
 	members := value.Members()
 	for _, member := range members {
-		 fmt.Println(member)
+		fmt.Println(member)
 	}
 }
 
 func ProcessCommands() {
 	switch *command {
-		case create:
-			CreateErnyi()
-		case join:
-			Join()
-		case members:
-			Members()
-		default:
-			fmt.Println("Unknown command")
+	case create:
+		CreateErnyi()
+	case join:
+		Join()
+	case members:
+		Members()
+	default:
+		fmt.Println("Unknown command")
 	}
 }
 
 func main() {
 	kingpin.Version("0.0.1")
-  	kingpin.Parse()
-  	ProcessCommands()
+	kingpin.Parse()
+	ProcessCommands()
 }
