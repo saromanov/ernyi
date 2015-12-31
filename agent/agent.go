@@ -18,7 +18,7 @@ type Agent struct {
 	Ern *ernyi.Ernyi
 }
 
-func CreateAgent(name, addr string) {
+func CreateAgent(name, addr, rpcaddr string) {
 	agent := new(Agent)
 	mconfig := memberlist.DefaultLANConfig()
 	if name == "" {
@@ -48,7 +48,7 @@ func CreateAgent(name, addr string) {
 	value := ernyi.CreateErnyi(cfg)
 	agent.Ern = value
 	rpc.Register(agent)
-	setupRPC("127.0.0.1:9652")
+	setupRPC(rpcaddr)
 	agent.Ern.Start()
 }
 

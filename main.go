@@ -11,9 +11,14 @@ import (
 )
 
 var (
+	rpcdefault = "127.0.0.1:9652"
+)
+
+var (
 	command = kingpin.Arg("command", "Command").Required().String()
 	name    = kingpin.Flag("name", "Name of the node").String()
 	addr    = kingpin.Flag("addr", "Address of Ernyi node in format host:port").String()
+	rpcaddr = kingpin.Flag("rpcaddr", "RPC address").Default(rpcdefault).String()
 )
 
 var (
@@ -23,12 +28,17 @@ var (
 	members = "members"
 )
 
+
 func CreateErnyi() {
-	agent.CreateAgent(*name, *addr)
+	agent.CreateAgent(*name, *addr, *rpcaddr)
 }
 
 func Join() {
-	client, err := rpc.DialHTTP("tcp", "127.0.0.1:9652")
+	if *rpcaddr == "" {
+		log.Fatal("RPC address is empty")
+	}
+
+	client, err := rpc.DialHTTP("tcp", *rpcaddr)
 	if err != nil {
 		log.Fatal("dialing:", err)
 	}
