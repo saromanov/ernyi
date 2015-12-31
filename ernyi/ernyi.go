@@ -1,38 +1,38 @@
 package ernyi
 
 import (
-    "github.com/hashicorp/memberlist"
-    "sync"
-    "errors"
-    "log"
-    "fmt"
-    "net"
-    "os"
-    "time"
-    "os/signal"
-    "syscall"
-    "./event"
+	"github.com/saromanov/ernyi/ernyi/event"
+	"errors"
+	"fmt"
+	"github.com/hashicorp/memberlist"
+	"log"
+	"net"
+	"os"
+	"os/signal"
+	"sync"
+	"syscall"
+	"time"
 )
 
 var (
-	errEmptyName = errors.New("Member must contain address")
+	errEmptyName        = errors.New("Member must contain address")
 	errEmptyListMembers = errors.New("List of members is empty")
 )
 
 type Ernyi struct {
-	mlist  *memberlist.Memberlist
-	memberlock  *sync.RWMutex
-	tags   map[string][]string
-	event  chan event.Event
-	addr string
+	mlist      *memberlist.Memberlist
+	memberlock *sync.RWMutex
+	tags       map[string][]string
+	event      chan event.Event
+	addr       string
 }
 
-func CreateErnyi(config *Config)*Ernyi {
+func CreateErnyi(config *Config) *Ernyi {
 	ern := new(Ernyi)
 	ern.memberlock = &sync.RWMutex{}
 	Addr := &net.TCPAddr{
-		 IP:   net.ParseIP(config.MemberlistConfig.BindAddr),
-		 Port: config.MemberlistConfig.BindPort,
+		IP:   net.ParseIP(config.MemberlistConfig.BindAddr),
+		Port: config.MemberlistConfig.BindPort,
 	}
 	ern.addr = Addr.String()
 	mlist, err := memberlist.Create(config.MemberlistConfig)
@@ -41,13 +41,13 @@ func CreateErnyi(config *Config)*Ernyi {
 	}
 	ern.tags = map[string][]string{}
 	ern.mlist = mlist
-	ern.event = make(chan event.Event,64)
+	ern.event = make(chan event.Event, 64)
 	ern.Join(ern.addr)
 	return ern
 }
 
 // Join provides joining of the new member
-func (ern *Ernyi) Join(addr string) error{
+func (ern *Ernyi) Join(addr string) error {
 	if addr == "" {
 		return errEmptyName
 	}
@@ -79,14 +79,14 @@ func (ern *Ernyi) JoinMany(addrs []string) error {
 	}
 
 	if len(addrs) != nummembers {
-		return fmt.Errorf("Expected number of joining nodes %d. Found - %d", len(addrs), 
+		return fmt.Errorf("Expected number of joining nodes %d. Found - %d", len(addrs),
 			nummembers)
 	}
 	return nil
 }
 
 // Tags add tags for node
-func (ern *Ernyi) Tags(nodename string, tags[]string) {
+func (ern *Ernyi) Tags(nodename string, tags []string) {
 	ern.tags[nodename] = tags
 }
 
@@ -103,28 +103,27 @@ func (ern *Ernyi) Send(addr string, msg []byte) error {
 }
 
 // Ping provides ping to the node with the specified name
-func (ern *Ernyi) Ping(addrname string, addr net.Addr)(time.Duration, error) {
+func (ern *Ernyi) Ping(addrname string, addr net.Addr) (time.Duration, error) {
 	return ern.mlist.Ping(addrname, addr)
 }
 
 // Info returns information about Ernyi
-func (ern *Ernyi) Info() map[string] string {
-	return map[string] string {
+func (ern *Ernyi) Info() map[string]string {
+	return map[string]string{
 		"protocol_version": fmt.Sprintf("%s", ern.mlist.ProtocolVersion()),
 	}
 }
 
-
 // Start provides basic start if Ernyi
 func (ern *Ernyi) Start() {
-	go func(){
+	go func() {
 		for {
 			select {
-				case item := <- ern.event:
-					eventname := item.String()
-					if eventname == "stop" {
-						return
-					}
+			case item := <-ern.event:
+				eventname := item.String()
+				if eventname == "stop" {
+					return
+				}
 			}
 		}
 	}()
@@ -132,27 +131,27 @@ func (ern *Ernyi) Start() {
 	ern.receiveExit()
 }
 
-func (ern *Ernyi) receiveExit(){
+func (ern *Ernyi) receiveExit() {
 	c := make(chan os.Signal, 1)
-    signal.Notify(c, os.Interrupt)
-    signal.Notify(c, syscall.SIGTERM)
-    <-c
-    ern.Stop()
-    os.Exit(1)
+	signal.Notify(c, os.Interrupt)
+	signal.Notify(c, syscall.SIGTERM)
+	<-c
+	ern.Stop()
+	os.Exit(1)
 }
 
 // Stop provides stopping of Ernyi
 func (ern *Ernyi) Stop() error {
 	var err error
-	 err = ern.mlist.Shutdown()
-	 if err != nil {
-	 	return err
-	 }
+	err = ern.mlist.Shutdown()
+	if err != nil {
+		return err
+	}
 
-	 return nil
+	return nil
 }
 
 // Members return current alive members
-func (ern *Ernyi) Members()[]*memberlist.Node {
+func (ern *Ernyi) Members() []*memberlist.Node {
 	return ern.mlist.Members()
 }
