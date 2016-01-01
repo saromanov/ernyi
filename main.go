@@ -51,6 +51,8 @@ func Join() {
 	if !reply {
 		log.Fatal("Replay from command Join is false")
 	}
+
+	Output("Join", fmt.Sprintf("Joining client by address %s", *addr))
 }
 
 func Members() {
@@ -84,6 +86,10 @@ func ProcessCommands() {
 	default:
 		fmt.Println("Unknown command")
 	}
+}
+
+func Output(command, msg string){
+	fmt.Println(fmt.Sprintf("Command: %s\nOutput: %s", command, msg))
 }
 
 func main() {
