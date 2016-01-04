@@ -22,6 +22,7 @@ type Agent struct {
 	Tags map[string][]string
 }
 
+// CreateAgent returns new agent object
 func CreateAgent(name, addr, rpcaddr string) {
 	agent := new(Agent)
 	mconfig := memberlist.DefaultLANConfig()
@@ -57,6 +58,7 @@ func CreateAgent(name, addr, rpcaddr string) {
 	agent.Ern.Start()
 }
 
+// Join provides joining of the new address of node
 func (agent *Agent) Join(addr string, reply *bool) error {
 	err := agent.Ern.Join(addr)
 	if err == nil {
@@ -66,6 +68,7 @@ func (agent *Agent) Join(addr string, reply *bool) error {
 	return err
 }
 
+// Members return list of members on the cluster
 func (agent *Agent) Members(members *[]*memberlist.Node, reply *bool) error {
 	result := agent.Ern.Members()
 	*members = result
@@ -73,6 +76,7 @@ func (agent *Agent) Members(members *[]*memberlist.Node, reply *bool) error {
 	return nil
 }
 
+// SetTag provides setting new tag for agents
 func (agent *Agent) SetTag(item *structs.RPCSetTag, reply *bool) error {
 	// Must be global update for tags
 	if item == nil {
