@@ -27,6 +27,7 @@ type Ernyi struct {
 	addr       string
 }
 
+// CreateErnyi provides new object of ernyi
 func CreateErnyi(config *Config) *Ernyi {
 	ern := new(Ernyi)
 	ern.memberlock = &sync.RWMutex{}
