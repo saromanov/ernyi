@@ -86,6 +86,12 @@ func (ern *Ernyi) JoinMany(addrs []string) error {
 	return nil
 }
 
+func (ern *Ernyi) Leave() error {
+	ern.memberlock.Lock()
+	defer ern.memberlock.Unlock()
+	return ern.mlist.Leave()
+}
+
 // Tags add tags for node
 func (ern *Ernyi) Tags(nodename string, tags []string) {
 	ern.tags[nodename] = tags

@@ -68,6 +68,15 @@ func (agent *Agent) Join(addr string, reply *bool) error {
 	return err
 }
 
+func (agent *Agent) Leave(reply *bool) error {
+	err := agent.Ern.Leave()
+	if err == nil {
+		*reply = true
+	}
+
+	return err
+}
+
 // Members return list of members on the cluster
 func (agent *Agent) Members(members *[]*memberlist.Node, reply *bool) error {
 	result := agent.Ern.Members()
