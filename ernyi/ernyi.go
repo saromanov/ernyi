@@ -86,6 +86,7 @@ func (ern *Ernyi) JoinMany(addrs []string) error {
 	return nil
 }
 
+// Leave provides closes for ernyi
 func (ern *Ernyi) Leave() error {
 	ern.memberlock.Lock()
 	defer ern.memberlock.Unlock()
