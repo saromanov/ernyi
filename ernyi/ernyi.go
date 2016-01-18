@@ -12,6 +12,7 @@ import (
 	"sync"
 	"syscall"
 	"time"
+	"string"
 )
 
 var (
@@ -119,6 +120,7 @@ func (ern *Ernyi) Ping(addrname string, addr net.Addr) (time.Duration, error) {
 func (ern *Ernyi) Info() map[string]string {
 	return map[string]string{
 		"protocol_version": fmt.Sprintf("%s", ern.mlist.ProtocolVersion()),
+		"time": time.Now().String(),
 	}
 }
 
