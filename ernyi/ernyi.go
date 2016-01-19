@@ -134,6 +134,11 @@ func (ern *Ernyi) Start() {
 				if eventname == "stop" {
 					return
 				}
+
+				// ping to random hosts
+				if eventname == "ping" {
+
+				}
 			}
 		}
 	}()
