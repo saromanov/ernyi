@@ -105,7 +105,6 @@ func (ern *Ernyi) Send(addr string, msg []byte) error {
 	if node == nil {
 		return fmt.Errorf("Can't get local node")
 	}
-	fmt.Println("Num MEMBERS: ", ern.mlist.NumMembers())
 	ern.mlist.SendToTCP(node, msg)
 
 	return nil
