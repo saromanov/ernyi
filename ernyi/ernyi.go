@@ -145,6 +145,7 @@ func (ern *Ernyi) Start() {
 	ern.receiveExit()
 }
 
+// Check exit from ernyi
 func (ern *Ernyi) receiveExit() {
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
