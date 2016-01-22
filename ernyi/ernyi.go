@@ -157,8 +157,7 @@ func (ern *Ernyi) receiveExit() {
 
 // Stop provides stopping of Ernyi
 func (ern *Ernyi) Stop() error {
-	var err error
-	err = ern.mlist.Shutdown()
+	err := ern.mlist.Shutdown()
 	if err != nil {
 		return err
 	}
