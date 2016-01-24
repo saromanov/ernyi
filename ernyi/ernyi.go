@@ -172,3 +172,8 @@ func (ern *Ernyi) Stop() error {
 func (ern *Ernyi) Members() []*memberlist.Node {
 	return ern.mlist.Members()
 }
+
+func (ern *Ernyi) LocalNode()*memberlist.Node {
+	return ern.mlist.LocalNode()
+}
+
