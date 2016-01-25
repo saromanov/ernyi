@@ -173,6 +173,7 @@ func (ern *Ernyi) Members() []*memberlist.Node {
 	return ern.mlist.Members()
 }
 
+// LocalNode returns current local node
 func (ern *Ernyi) LocalNode()*memberlist.Node {
 	return ern.mlist.LocalNode()
 }
