@@ -20,6 +20,7 @@ var (
 	errEmptyListMembers = errors.New("List of members is empty")
 )
 
+// Erny provides main struct
 type Ernyi struct {
 	mlist      *memberlist.Memberlist
 	memberlock *sync.RWMutex
