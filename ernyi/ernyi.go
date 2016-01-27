@@ -27,6 +27,7 @@ type Ernyi struct {
 	tags       map[string][]string
 	event      chan event.Event
 	addr       string
+	events     map[string][]string
 }
 
 // CreateErnyi provides new object of ernyi
