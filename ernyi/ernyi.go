@@ -28,6 +28,7 @@ type Ernyi struct {
 	event      chan event.Event
 	addr       string
 	events     map[string][]string
+	fails      map[string][]string
 }
 
 // CreateErnyi provides new object of ernyi
