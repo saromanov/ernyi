@@ -73,7 +73,8 @@ func (ern *Ernyi) Join(addr string) error {
 
 // JoinMany provides joining several nodes at once
 func (ern *Ernyi) JoinMany(addrs []string) error {
-	if len(addrs) == 0 {
+	lenAddr := len(addr)
+	if lenAddr == 0 {
 		return errEmptyListMembers
 	}
 	ern.memberlock.Lock()
@@ -83,8 +84,8 @@ func (ern *Ernyi) JoinMany(addrs []string) error {
 		return err
 	}
 
-	if len(addrs) != nummembers {
-		return fmt.Errorf("Expected number of joining nodes %d. Found - %d", len(addrs),
+	if lenAddr != nummembers {
+		return fmt.Errorf("Expected number of joining nodes %d. Found - %d", lenAddr,
 			nummembers)
 	}
 	return nil
