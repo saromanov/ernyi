@@ -47,7 +47,10 @@ func CreateErnyi(config *Config) *Ernyi {
 	ern.tags = map[string][]string{}
 	ern.mlist = mlist
 	ern.event = make(chan event.Event, 64)
-	ern.Join(ern.addr)
+	err = ern.Join(ern.addr)
+	if err != nil {
+		return err
+	}
 	return ern
 }
 
