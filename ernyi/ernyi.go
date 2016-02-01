@@ -49,7 +49,7 @@ func CreateErnyi(config *Config) *Ernyi {
 	ern.event = make(chan event.Event, 64)
 	err = ern.Join(ern.addr)
 	if err != nil {
-		return err
+		log.Fatal(err)
 	}
 	return ern
 }
