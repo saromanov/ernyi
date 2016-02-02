@@ -63,7 +63,6 @@ func (ern *Ernyi) Join(addr string) error {
 	defer ern.memberlock.Unlock()
 	nummembers, err := ern.mlist.Join([]string{addr})
 	if err != nil {
-		fmt.Println("ERRR: ", nummembers, err)
 		return err
 	}
 
