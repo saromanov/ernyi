@@ -102,6 +102,10 @@ func (ern *Ernyi) Leave() error {
 
 // Tags add tags for node
 func (ern *Ernyi) Tags(nodename string, tags []string) {
+	_, ok := ern.tags[nodename]
+	if !ok {
+		return
+	}
 	ern.tags[nodename] = tags
 }
 
