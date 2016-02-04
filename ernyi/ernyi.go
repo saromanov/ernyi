@@ -15,6 +15,7 @@ import (
 	"string"
 )
 
+// Definition of errors
 var (
 	errEmptyName        = errors.New("Member must contain address")
 	errEmptyListMembers = errors.New("List of members is empty")
