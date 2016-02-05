@@ -41,6 +41,7 @@ func CreateErnyi(config *Config) *Ernyi {
 		Port: config.MemberlistConfig.BindPort,
 	}
 	ern.addr = Addr.String()
+	// Create basic memberlist model
 	mlist, err := memberlist.Create(config.MemberlistConfig)
 	if err != nil {
 		log.Fatal(err)
