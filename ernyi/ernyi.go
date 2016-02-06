@@ -30,6 +30,7 @@ type Ernyi struct {
 	addr       string
 	events     map[string][]string
 	fails      map[string][]string
+	success    map[string][]string
 }
 
 // CreateErnyi provides new object of ernyi
