@@ -1,10 +1,8 @@
 package ernyi
 
 import (
-	"github.com/saromanov/ernyi/ernyi/event"
 	"errors"
 	"fmt"
-	"github.com/hashicorp/memberlist"
 	"log"
 	"net"
 	"os"
@@ -13,6 +11,9 @@ import (
 	"syscall"
 	"time"
 	"string"
+
+	"github.com/saromanov/ernyi/ernyi/event"
+	"github.com/hashicorp/memberlist"
 )
 
 // Definition of errors
