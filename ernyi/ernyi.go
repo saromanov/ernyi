@@ -24,6 +24,7 @@ var (
 
 // Erny provides main struct
 type Ernyi struct {
+	// main item for member list
 	mlist      *memberlist.Memberlist
 	memberlock *sync.RWMutex
 	tags       map[string][]string
