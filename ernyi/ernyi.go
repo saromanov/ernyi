@@ -128,7 +128,7 @@ func (ern *Ernyi) Send(addr string, msg []byte) error {
 // Ping provides ping to the node with the specified name
 func (ern *Ernyi) Ping(addrname string, addr net.Addr) (time.Duration, error) {
 	if addrname == "" {
-		return time.Duration{}, fmt.Errorf("Addrname can't be empty")
+		return time.Duration{}, fmt.Errorf("Addrname parameter can't be empty")
 	}
 	return ern.mlist.Ping(addrname, addr)
 }
