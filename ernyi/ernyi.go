@@ -114,6 +114,7 @@ func (ern *Ernyi) Tags(nodename string, tags []string) {
 	ern.tags[nodename] = tags
 }
 
+// Send provides sending data to nodes on TCP
 func (ern *Ernyi) Send(addr string, msg []byte) error {
 	node := ern.mlist.LocalNode()
 
