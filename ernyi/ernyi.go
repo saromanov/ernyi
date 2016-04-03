@@ -10,7 +10,6 @@ import (
 	"sync"
 	"syscall"
 	"time"
-	"string"
 
 	"github.com/saromanov/ernyi/ernyi/event"
 	"github.com/hashicorp/memberlist"
@@ -80,7 +79,7 @@ func (ern *Ernyi) Join(addr string) error {
 
 // JoinMany provides joining several nodes at once
 func (ern *Ernyi) JoinMany(addrs []string) error {
-	lenAddr := len(addr)
+	lenAddr := len(addrs)
 	if lenAddr == 0 {
 		return errEmptyListMembers
 	}
@@ -102,7 +101,7 @@ func (ern *Ernyi) JoinMany(addrs []string) error {
 func (ern *Ernyi) Leave() error {
 	ern.memberlock.Lock()
 	defer ern.memberlock.Unlock()
-	return ern.mlist.Leave()
+	return ern.mlist.Leave(2 * time.Second)
 }
 
 // Tags add tags for node
@@ -129,7 +128,7 @@ func (ern *Ernyi) Send(addr string, msg []byte) error {
 // Ping provides ping to the node with the specified name
 func (ern *Ernyi) Ping(addrname string, addr net.Addr) (time.Duration, error) {
 	if addrname == "" {
-		return time.Duration{}, fmt.Errorf("Addrname parameter can't be empty")
+		return time.Second, fmt.Errorf("Addrname parameter can't be empty")
 	}
 	return ern.mlist.Ping(addrname, addr)
 }
