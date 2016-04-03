@@ -36,15 +36,23 @@ type Ernyi struct {
 
 // CreateErnyi provides new object of ernyi
 func CreateErnyi(config *Config) *Ernyi {
+	defaultConfig := memberlist.DefaultLANConfig()
+	bindAddr := defaultConfig.BindAddr
+	bindPort := defaultConfig.BindPort
+	if config != nil && config.MemberlistConfig != nil {
+		bindAddr = config.MemberlistConfig.BindAddr
+		bindPort = config.MemberlistConfig.BindPort
+		defaultConfig = config.MemberlistConfig
+	}
 	ern := new(Ernyi)
 	ern.memberlock = &sync.RWMutex{}
 	Addr := &net.TCPAddr{
-		IP:   net.ParseIP(config.MemberlistConfig.BindAddr),
-		Port: config.MemberlistConfig.BindPort,
+		IP:   net.ParseIP(bindAddr),
+		Port: bindPort,
 	}
 	ern.addr = Addr.String()
 	// Create basic memberlist model
-	mlist, err := memberlist.Create(config.MemberlistConfig)
+	mlist, err := memberlist.Create(defaultConfig)
 	if err != nil {
 		log.Fatal(err)
 	}
