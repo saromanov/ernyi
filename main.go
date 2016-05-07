@@ -4,12 +4,14 @@ import (
 	"fmt"
 	"github.com/hashicorp/memberlist"
 	"github.com/saromanov/ernyi/agent"
+	"github.com/saromanov/ernyi/utils"
 	"gopkg.in/alecthomas/kingpin.v2"
 	"log"
 	"net/rpc"
 )
 
 var (
+	defaultAddr = "127.0.0.1"
 	rpcdefault = "127.0.0.1:9652"
 	versionNum = "0.1"
 )
@@ -31,7 +33,8 @@ var (
 
 
 func CreateErnyi() {
-	agent.CreateAgent(*name, *addr, *rpcaddr)
+	addrRPC := defaultAddr + ":" + utils.GenRandomPort()
+	agent.CreateAgent(*name, *addr, addrRPC)
 }
 
 func Join() {
