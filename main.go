@@ -11,6 +11,7 @@ import (
 
 var (
 	rpcdefault = "127.0.0.1:9652"
+	versionNum = "0.1"
 )
 
 var (
@@ -25,6 +26,7 @@ var (
 	join    = "join"
 	info    = "info"
 	members = "members"
+	version = "version"
 )
 
 
@@ -75,6 +77,10 @@ func Members() {
 	fmt.Println(members)
 }
 
+func Version() {
+	fmt.Println(versionNum)
+}
+
 func ProcessCommands() {
 	switch *command {
 	case create:
@@ -83,6 +89,8 @@ func ProcessCommands() {
 		Join()
 	case members:
 		Members()
+	case version:
+		Version()
 	default:
 		fmt.Println("Unknown command")
 	}
