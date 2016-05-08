@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/hashicorp/memberlist"
 	"github.com/saromanov/ernyi/agent"
 	"github.com/saromanov/ernyi/utils"
+	"github.com/saromanov/ernyi/structs"
 	"gopkg.in/alecthomas/kingpin.v2"
 	"log"
 	"net/rpc"
@@ -61,13 +61,14 @@ func Join() {
 }
 
 func Members() {
+	
 	client, err := rpc.DialHTTP("tcp", *rpcaddr)
 	if err != nil {
 		log.Fatal("dialing:", err)
 	}
 
 	var reply bool
-	var members []*memberlist.Node
+	var members structs.MembersResponse
 	err = client.Call("Agent.Members", &members, &reply)
 	if err != nil {
 		log.Fatal(fmt.Sprintf("%v", err))

@@ -109,7 +109,7 @@ func (ern *Ernyi) JoinMany(addrs []string) error {
 func (ern *Ernyi) Leave() error {
 	ern.memberlock.Lock()
 	defer ern.memberlock.Unlock()
-	return ern.mlist.Leave(2 * time.Second)
+	return ern.mlist.Leave(3*time.Second)
 }
 
 // Tags add tags for node

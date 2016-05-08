@@ -55,6 +55,8 @@ func CreateAgent(name, addr, rpcaddr string) {
 	agent.Tags = map[string][]string{}
 	rpc.Register(agent)
 	setupRPC(rpcaddr)
+	fmt.Printf("Address: %s", addr)
+	fmt.Printf("RPC Address: %s", rpcaddr)
 	agent.Ern.Start()
 }
 
@@ -68,6 +70,7 @@ func (agent *Agent) Join(addr string, reply *bool) error {
 	return err
 }
 
+// Leave provides leaving all nodes
 func (agent *Agent) Leave(reply *bool) error {
 	err := agent.Ern.Leave()
 	if err == nil {
@@ -78,9 +81,10 @@ func (agent *Agent) Leave(reply *bool) error {
 }
 
 // Members return list of members on the cluster
-func (agent *Agent) Members(members *[]*memberlist.Node, reply *bool) error {
+func (agent *Agent) Members(members *structs.MembersResponse, reply *bool) error {
 	result := agent.Ern.Members()
-	*members = result
+	fmt.Println(result)
+	*members = structs.MembersResponse{Members:result}
 	*reply = true
 	return nil
 }
