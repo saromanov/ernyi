@@ -61,7 +61,7 @@ func Join() {
 }
 
 func Members() {
-	
+
 	client, err := rpc.DialHTTP("tcp", *rpcaddr)
 	if err != nil {
 		log.Fatal("dialing:", err)
@@ -72,10 +72,12 @@ func Members() {
 	err = client.Call("Agent.Members", &members, &reply)
 	if err != nil {
 		log.Fatal(fmt.Sprintf("%v", err))
+		return
 	}
 
 	if !reply {
 		log.Fatal("Replay from command Join is false")
+		return
 	}
 
 	fmt.Println(members)

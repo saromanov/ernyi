@@ -84,7 +84,7 @@ func (agent *Agent) Leave(reply *bool) error {
 func (agent *Agent) Members(members *structs.MembersResponse, reply *bool) error {
 	result := agent.Ern.Members()
 	fmt.Println(result)
-	*members = structs.MembersResponse{Members:result}
+	members.Members = result
 	*reply = true
 	return nil
 }
