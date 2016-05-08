@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"net/http"
 	"net/rpc"
+	"os/exec"
 
 	"github.com/saromanov/ernyi/ernyi"
 	"github.com/saromanov/ernyi/structs"
@@ -86,6 +87,16 @@ func (agent *Agent) Members(members *structs.MembersResponse, reply *bool) error
 	fmt.Println(result)
 	members = &structs.MembersResponse{result, result[0].Name}
 	*reply = true
+	return nil
+}
+
+func (agent *Agent) Exec(command *string, reply *bool) error {
+	out, err := exec.Command(*command).Output()
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(string(out))
 	return nil
 }
 

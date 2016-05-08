@@ -21,6 +21,7 @@ var (
 	name    = kingpin.Flag("name", "Name of the node").String()
 	addr    = kingpin.Flag("addr", "Address of Ernyi node in format host:port").String()
 	rpcaddr = kingpin.Flag("rpcaddr", "RPC address").Default(rpcdefault).String()
+	commandExec    = kingpin.Flag("exec", "Command for execution").String()
 )
 
 var (
@@ -29,6 +30,7 @@ var (
 	info    = "info"
 	members = "members"
 	version = "version"
+	exec = "exec"
 )
 
 
@@ -84,6 +86,27 @@ func Members() {
 	fmt.Println(members)
 }
 
+// Execute the command
+func Exec() {
+	client, err := rpc.DialHTTP("tcp", *rpcaddr)
+	if err != nil {
+		log.Fatal("dialing:", err)
+		return
+	}
+
+	var reply bool
+	err = client.Call("Agent.Exec", commandExec, &reply)
+	if err != nil {
+		log.Fatal(fmt.Sprintf("%v", err))
+		return
+	}
+
+	if !reply {
+		log.Fatal("Replay from command Join is false")
+		return
+	}
+}
+
 func Version() {
 	fmt.Println(versionNum)
 }
@@ -98,6 +121,8 @@ func ProcessCommands() {
 		Members()
 	case version:
 		Version()
+	case exec:
+		Exec()
 	default:
 		fmt.Println("Unknown command")
 	}
