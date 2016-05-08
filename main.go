@@ -68,7 +68,7 @@ func Members() {
 	}
 
 	var reply bool
-	var members structs.MembersResponse
+	members := &structs.MembersResponse{}
 	err = client.Call("Agent.Members", &members, &reply)
 	if err != nil {
 		log.Fatal(fmt.Sprintf("%v", err))
@@ -80,6 +80,7 @@ func Members() {
 		return
 	}
 
+	fmt.Println(reply)
 	fmt.Println(members)
 }
 

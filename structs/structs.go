@@ -10,4 +10,5 @@ type RPCSetTag struct {
 
 type MembersResponse struct {
 	Members []*memberlist.Node
+	Name   string
 }

@@ -53,8 +53,8 @@ func CreateAgent(name, addr, rpcaddr string) {
 	value := ernyi.CreateErnyi(cfg)
 	agent.Ern = value
 	agent.Tags = map[string][]string{}
-	rpc.Register(agent)
-	setupRPC(rpcaddr)
+	go rpc.Register(agent)
+	go setupRPC(rpcaddr)
 	fmt.Printf("Address: %s", addr)
 	fmt.Printf("RPC Address: %s", rpcaddr)
 	agent.Ern.Start()
@@ -84,7 +84,7 @@ func (agent *Agent) Leave(reply *bool) error {
 func (agent *Agent) Members(members *structs.MembersResponse, reply *bool) error {
 	result := agent.Ern.Members()
 	fmt.Println(result)
-	members.Members = result
+	members = &structs.MembersResponse{result, result[0].Name}
 	*reply = true
 	return nil
 }
